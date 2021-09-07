@@ -1,0 +1,26 @@
+{
+  "name": "city-explorer-backed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NashatAlzaatreh/city-explorer-backed.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NashatAlzaatreh/city-explorer-backed/issues"
+  },
+  "homepage": "https://github.com/NashatAlzaatreh/city-explorer-backed#readme",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  }
+}
