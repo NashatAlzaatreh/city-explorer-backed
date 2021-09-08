@@ -45,7 +45,7 @@ My partner in lab06 : Qutadah Almomani
 
 ### Web Request Response cycle
 
-![Web Request Response cycle](img/webRequestResponse.png)
+![Web Request Response cycle](img/wrrc.PNG)
 
 ```
 Name of feature:
