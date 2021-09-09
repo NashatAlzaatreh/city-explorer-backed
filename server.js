@@ -8,6 +8,8 @@ require("dotenv").config();
 
 const PORT = process.env.PORT;
 
+const WEATHER_BIT_KEY = process.env.WEATHER_API_KEY;
+
 const weather = require("./data/weather.json");
 
 app.get(
@@ -28,22 +30,27 @@ class Forecast {
 
 Forecast.all = [];
 
-app.get("/weather", (request, response) => {
-  console.log(request);
+app.get("/weather", async (request, response) => {
+  // const weatherBitUrl = `https://api.weatherbit.io/v2.0/forecast/daily?key=${WEATHER_BIT_KEY}&lat=${request.query.lat}&lon=${request.query.lon}`;
+
+  // const weatherBitResponse = await axios.get(`${weatherBitUrl}`);
+  console.log("backend");
 
   const city_name = request.query.city_name;
-  const lon = request.query.lon;
-  const lat = request.query.lat;
+  // const lon = request.query.lon;
+  // const lat = request.query.lat;
 
   if (city_name) {
     const returnArr = weather.find((item) => {
       return item.city_name.toLowerCase() === city_name;
     });
-    let dataArr = returnArray.data.map((value) => {
+    let dataArr = returnArr.data.map((value) => {
       // console.log(data1.weather.description);
+      console.log(value);
       return new Forecast(
-        ` Low of ${value.low_temp}, high of ${value.high_temp} with ${value.weather.description} `,
-        ` ${value.datetime}`
+        value
+        // ` Low of ${value.low_temp}, high of ${value.high_temp} with ${value.weather.description} `,
+        // ` ${value.datetime}`
       );
     });
     if (dataArr.length) {
