@@ -2,13 +2,12 @@
 const express = require("express"); // require the express package
 const app = express(); // initialize your express app instance
 const cors = require("cors");
+const axios = require("axios");
 app.use(cors());
 
 require("dotenv").config();
 
 const PORT = process.env.PORT;
-
-const WEATHER_BIT_KEY = process.env.WEATHER_API_KEY;
 
 const weather = require("./data/weather.json");
 
@@ -22,47 +21,94 @@ app.get(
 
 class Forecast {
   constructor(data) {
-    this.date = data.valid_date;
-    this.description = data.weather.description;
+    // this.date = data.valid_date;
+    // this.description = data.weather.description;
+    this.description = description;
+    this.date = date;
     Forecast.all.push(this);
   }
 }
 
 Forecast.all = [];
 
+class Movies {
+  constructor(data) {
+    this.title = title;
+    this.overview = overview;
+    this.average_votes = average_votes;
+    this.total_votes = total_votes;
+    this.image_url = image_url;
+    this.popularity = popularity;
+    this.released_on = released_on;
+  }
+}
+
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
+
+// =================== weatherBit ======================
+
 app.get("/weather", async (request, response) => {
-  // const weatherBitUrl = `https://api.weatherbit.io/v2.0/forecast/daily?key=${WEATHER_BIT_KEY}&lat=${request.query.lat}&lon=${request.query.lon}`;
-
-  // const weatherBitResponse = await axios.get(`${weatherBitUrl}`);
-  console.log("backend");
-
   const city_name = request.query.city_name;
-  // const lon = request.query.lon;
-  // const lat = request.query.lat;
+  const lat = request.query.lat;
+  const lon = request.query.lon;
 
+  const weatherBitUrl = "https://api.weatherbit.io/v2.0/forecast/daily";
+
+  const weatherBitResponse = await axios.get(
+    `${weatherBitUrl}?lat=${lat}&lon=${lon}&key=${WEATHER_API_KEY}`
+  );
+
+  // Model the data according to the ticket
+
+  response.json(weatherBitResponse.data);
+  // console.log(weatherBitResponse.data);
   if (city_name) {
-    const returnArr = weather.find((item) => {
-      return item.city_name.toLowerCase() === city_name;
+    const weatherBitArr = weatherBitResponse.data.map((value) => {
+      return new Movies(value);
     });
-    let dataArr = returnArr.data.map((value) => {
-      // console.log(data1.weather.description);
-      console.log(value);
-      return new Forecast(
-        value
-        // ` Low of ${value.low_temp}, high of ${value.high_temp} with ${value.weather.description} `,
-        // ` ${value.datetime}`
-      );
-    });
-    if (dataArr.length) {
-      response.json(dataArr);
+
+    if (weatherBitArr.length) {
+      response.json(weatherBitArr);
     } else {
-      response.send("the city is not exists");
+      response.send("error: 0000000000000.");
     }
   } else {
     // response.send("try another city")
-    response.json(weather);
+    response.json("error: 11111111111111111.");
   }
 });
+// ===================== weatherBit =======================
+
+// ====================== Movies ===========================
+app.get("/movies", async (request, response) => {
+  const city_name = request.query.city_name;
+  const moviesUrl = "https://api.themoviedb.org/3/movie/top_rated";
+
+  const moviesResponse = await axios.get(
+    `${moviesUrl}?api_key=${MOVIE_API_KEY}&city_name=${city_name}`
+  );
+
+  // Model the data according to the ticket
+
+  response.json(moviesResponse.data);
+  console.log(moviesResponse);
+
+  if (city_name) {
+    const moviesArr = moviesResponse.data.map((value) => {
+      return new Movies(value);
+    });
+
+    if (moviesArr.length) {
+      response.json(moviesArr);
+    } else {
+      response.send("error: 0000000000000.");
+    }
+  } else {
+    response.json("error: 11111111111111111.");
+  }
+});
+// ===================== Movies ======================
 
 app.listen(PORT, () => {
   console.log(`server on port ${PORT}`);
